@@ -35,7 +35,7 @@ public class Heap implements IPriorityQueue {
         return root;
     }
 
-    public void decreaseKey(int vertex, int newDist) {
+    public void decreaseKey(int vertex, double newDist) {
         Integer idx = position.get(vertex);
         if (idx == null) {
             throw new NoSuchElementException();

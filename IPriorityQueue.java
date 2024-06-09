@@ -8,5 +8,5 @@ public interface IPriorityQueue {
     // Removes and returns the element with the highest priority
     Node poll();
 
-    void decreaseKey(int vertex, int newDist);
+    void decreaseKey(int vertex, double newDist);
 }

@@ -7,14 +7,14 @@ public class Dijkstra {
         this.queue = queue;
     }
     
-    public int[][] dijkstra(int[][] graph, int source) {
+    public double[][] dijkstra(double[][] graph, int source) {
         int V = graph.length;
-        int[] distancias = new int[V];
+        double[] distancias = new double[V];
         int[] previos = new int[V];
         IPriorityQueue Q = queue;
 
         // Inicialización
-        Arrays.fill(distancias, Integer.MAX_VALUE);
+        Arrays.fill(distancias, Double.MAX_VALUE);
         Arrays.fill(previos, -1); 
         distancias[source] = 0;
         Q.add(new Node(source, 0));
@@ -22,7 +22,7 @@ public class Dijkstra {
         // Agregar todos los nodos a la cola con distancia infinita excepto la raíz
         for (int v = 0; v < V; v++) {
             if (v != source) {
-                Q.add(new Node(v, Integer.MAX_VALUE));
+                Q.add(new Node(v, Double.MAX_VALUE));
             }
         }
 
@@ -35,7 +35,7 @@ public class Dijkstra {
             // Relajación
             for (int v = 0; v < V; v++) {
                 if (graph[u][v] != 0) { // Hay una arista entre u y v
-                    int alt = distancias[u] + graph[u][v];
+                    double alt = distancias[u] + graph[u][v];
                     if (alt < distancias[v]) {
                         distancias[v] = alt;
                         previos[v] = u;
@@ -48,14 +48,22 @@ public class Dijkstra {
             }
         }
 
-        // Imprimir resultados
+        /*
+        imprime resultados
         System.out.println("Nodo\tDistancia desde la raíz\tPrevio");
         for (int i = 0; i < V; i++) {
             System.out.println(i + "\t\t" + distancias[i] + "\t\t" + previos[i]);
         }
+        */
+
+        double[] previosD = new double[previos.length];
+
+        for (int i = 0; i < previos.length; i++){
+            previosD[i] = previos[i]/1.0;
+        }
 
         
-        int[][] arreglos = new int[][]{distancias, previos};
+        double[][] arreglos = new double[][]{distancias, previosD};
         return arreglos;
     }
 }
