@@ -21,8 +21,7 @@ public class Main {
 
         Experiment e = new Experiment();
         Random rand = new Random(System.currentTimeMillis());
-        e.experimentHeap(10,20, rand);
-        //e.finalExperimentHeap(1);
+        e.finalExperimentHeap(50);
 
 
     }
