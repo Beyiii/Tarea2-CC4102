@@ -75,7 +75,7 @@ public class Fibonacci implements IPriorityQueue {
             cut(node, parent);
             cascadingCut(parent);
         }
-        if (min == null || node.distance < min.distance) {
+        if (node.distance < min.distance) {
             min = node;
         }
     }

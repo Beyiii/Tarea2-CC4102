@@ -39,9 +39,11 @@ public class Dijkstra {
                     if (alt < distancias[v]) {
                         distancias[v] = alt;
                         previos[v] = u;
-
+                        if (!Q.isEmpty()){
+                            Q.decreaseKey(v, alt);
+                        }
                         // Actualizar la distancia en la cola
-                        Q.decreaseKey(v, alt);
+                        
                         //Q.add(new Node(v, distancias[v])); // En un heap real usar decreaseKey
                     }
                 }

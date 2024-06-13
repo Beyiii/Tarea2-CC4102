@@ -23,7 +23,7 @@ public class Main {
  
         Experiment e = new Experiment();
         Random rand = new Random(System.currentTimeMillis());
-        e.finalExperimentHeap(1);
+        //e.experimentFibonacci(10, 18, rand);
 
     }
 }
