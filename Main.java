@@ -12,17 +12,18 @@ public class Main {
         };
         int source = 0; // Nodo raíz
 
-        IPriorityQueue queue =  new Heap();
+        //IPriorityQueue queue =  new Heap();
+
+        IPriorityQueue queue =  new Fibonacci();
 
         Dijkstra Dijkstra = new Dijkstra(queue);
 
         Dijkstra.dijkstra(graph, source);
-        System.out.println("heap!");
-
+        System.out.println("fibonacci!");
+ 
         Experiment e = new Experiment();
         Random rand = new Random(System.currentTimeMillis());
-        e.finalExperimentHeap(50);
-
+        e.finalExperimentHeap(1);
 
     }
 }

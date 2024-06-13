@@ -1,13 +1,20 @@
 import java.util.*;
 
-public class Fibonacci implements IPriorityQueue{
+public class Fibonacci implements IPriorityQueue {
 
     private Node min;
     private int size;
+    private Map<Integer, Node> nodeMap; // Mapa para seguimiento de nodos por su vértice
 
     public Fibonacci() {
         min = null;
         size = 0;
+        nodeMap = new HashMap<>();
+    }
+
+  
+    public void add(Node node) {
+        insert(node);
     }
 
     public void insert(Node node) {
@@ -15,11 +22,17 @@ public class Fibonacci implements IPriorityQueue{
             min = node;
         } else {
             mergeLists(min, node);
-            if (node.key < min.key) {
+            if (node.distance < min.distance) {
                 min = node;
             }
         }
+        nodeMap.put(node.vertex, node); // Agregar al mapa
         size++;
+    }
+
+
+    public Node poll() {
+        return extractMin();
     }
 
     public Node extractMin() {
@@ -41,25 +54,32 @@ public class Fibonacci implements IPriorityQueue{
                 min = extractedMin.right;
                 consolidate();
             }
+            nodeMap.remove(extractedMin.vertex); // Eliminar del mapa
             size--;
         }
         return extractedMin;
     }
 
-    public void decreaseKey(Node node, double newKey) {
-        if (newKey > node.key) {
+
+    public void decreaseKey(int vertex, double newKey) {
+        Node node = nodeMap.get(vertex); // Obtener el nodo desde el mapa
+        if (node == null) {
+            throw new IllegalArgumentException("Node with the given vertex does not exist");
+        }
+        if (newKey > node.distance) {
             throw new IllegalArgumentException("New key is greater than current key");
         }
-        node.key = newKey;
+        node.distance = newKey;
         Node parent = node.parent;
-        if (parent != null && node.key < parent.key) {
+        if (parent != null && node.distance < parent.distance) {
             cut(node, parent);
             cascadingCut(parent);
         }
-        if (node.key < min.key) {
+        if (min == null || node.distance < min.distance) {
             min = node;
         }
     }
+
 
     public boolean isEmpty() {
         return min == null;
@@ -124,7 +144,7 @@ public class Fibonacci implements IPriorityQueue{
             int degree = node.degree;
             while (aux.get(degree) != null) {
                 Node other = aux.get(degree);
-                if (node.key > other.key) {
+                if (node.distance > other.distance) {
                     Node temp = node;
                     node = other;
                     other = temp;
@@ -143,7 +163,7 @@ public class Fibonacci implements IPriorityQueue{
                     min = node;
                 } else {
                     mergeLists(min, node);
-                    if (node.key < min.key) {
+                    if (node.distance < min.distance) {
                         min = node;
                     }
                 }
@@ -159,32 +179,5 @@ public class Fibonacci implements IPriorityQueue{
         x.child = y;
         x.degree++;
         y.mark = false;
-    }
-
-    public static class Node {
-        private Node left, right, parent, child;
-        private double key;
-        private int degree;
-        private boolean mark;
-        private int vertex;
-
-        public Node(int vertex, double key) {
-            this.vertex = vertex;
-            this.key = key;
-            this.left = this;
-            this.right = this;
-            this.parent = null;
-            this.child = null;
-            this.degree = 0;
-            this.mark = false;
-        }
-
-        public int getVertex() {
-            return vertex;
-        }
-
-        public double getKey() {
-            return key;
-        }
     }
 }

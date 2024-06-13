@@ -1,10 +1,19 @@
 public class Node implements Comparable<Node> {
-    int vertex;
+    Node left, right, parent, child;
     double distance;
+    int degree;
+    boolean mark;
+    int vertex;
 
     Node(int vertex, double distance) {
         this.vertex = vertex;
         this.distance = distance;
+        this.left = this;
+        this.right = this;
+        this.parent = null;
+        this.child = null;
+        this.degree = 0;
+        this.mark = false;
     }
 
     @Override

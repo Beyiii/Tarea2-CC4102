@@ -48,8 +48,8 @@ public class Dijkstra {
             }
         }
 
-        /*
-        imprime resultados
+        /* 
+        //imprime resultados
         System.out.println("Nodo\tDistancia desde la raíz\tPrevio");
         for (int i = 0; i < V; i++) {
             System.out.println(i + "\t\t" + distancias[i] + "\t\t" + previos[i]);

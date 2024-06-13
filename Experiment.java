@@ -3,7 +3,9 @@ import java.util.concurrent.TimeUnit;
 
 public class Experiment {
     IPriorityQueue queueH =  new Heap();
+    IPriorityQueue queueF =  new Fibonacci();
     Dijkstra DijkstraH = new Dijkstra(queueH);
+    Dijkstra DijkstraF = new Dijkstra(queueF);
 
     public void experimentHeap(int i, int j, Random rand) {
         int v = (int) Math.pow(2, i);  
@@ -13,6 +15,20 @@ public class Experiment {
 
         long startTime = System.nanoTime();
         DijkstraH.dijkstra(graph, 0);
+        long endTime = System.nanoTime();
+
+        long duration = endTime - startTime;
+        System.out.println("v=" + v + ", e=" + e + ", Time (ms)=" + TimeUnit.NANOSECONDS.toMillis(duration)); 
+    }
+
+    public void experimentFibonacci(int i, int j, Random rand) {
+        int v = (int) Math.pow(2, i);  
+        int e = (int) Math.pow(2, j);
+
+        double[][] graph = GraphGenerator.generateGraph(v, e, rand); // rand: semilla para que el grafo sea distinto siempre
+
+        long startTime = System.nanoTime();
+        DijkstraF.dijkstra(graph, 0);
         long endTime = System.nanoTime();
 
         long duration = endTime - startTime;
@@ -38,6 +54,28 @@ public class Experiment {
 
         System.out.println("n de grafos recorridos: " + contador); 
     }
+
+    public void finalExperimentFibonacci(int n){
+        int[] vList = {10,12,14};
+        int[] eList = {16,17,18,19,20,21,22};
+        int contador = 0;
+    
+        for (int k=0; k<n; k++){
+            long seed = System.nanoTime() + k;
+            Random rand = new Random(seed);
+            
+            for (int i:vList){
+                for (int j:eList){
+                    experimentFibonacci(i, j, rand);
+                    contador ++;
+                }
+            }
+        }
+
+        System.out.println("n de grafos recorridos: " + contador); 
+    }
+
+
   
 }
 
