@@ -20,10 +20,10 @@ public class Main {
 
         Dijkstra.dijkstra(graph, source);
         System.out.println("fibonacci!");
- 
+
         Experiment e = new Experiment();
         Random rand = new Random(System.currentTimeMillis());
-        //e.experimentFibonacci(10, 18, rand);
-
+        e.experimentFibonacci(10, 22, rand);
+        
     }
 }

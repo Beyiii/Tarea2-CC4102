@@ -61,8 +61,7 @@ public class Fibonacci implements IPriorityQueue {
     }
 
 
-    public void decreaseKey(int vertex, double newKey) {
-        Node node = nodeMap.get(vertex); // Obtener el nodo desde el mapa
+    public void decreaseKey(Node node, double newKey) {
         if (node == null) {
             throw new IllegalArgumentException("Node with the given vertex does not exist");
         }
