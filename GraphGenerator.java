@@ -17,9 +17,11 @@ public class GraphGenerator {
         while (edgesAdded < e) {
             int i = rand.nextInt(v);
             int j = rand.nextInt(v);
-            if (i != j) { // VERLOOO
+            if (i != j) {
                 double weight = rand.nextDouble() * 0.99999 + 0.00001; // Pesos aleatorios entre (0, 1]
-                graph[i][j] = graph[j][i] = weight;
+                if (graph[i][j] > weight){
+                    graph[i][j] = graph[j][i] = weight;  //sobre escribimos los pesos 
+                }
                 edgesAdded++;
             }
         }

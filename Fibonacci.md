@@ -479,3 +479,415 @@ public class DijkstraFibonacciHeap {
 }
 Resumen
 Este código define una implementación completa de una cola de Fibonacci y la integra con el algoritmo de Dijkstra. La cola de Fibonacci permite una operación decreaseKey en tiempo constante, lo que mejora la eficiencia del algoritmo de Dijkstra, especialmente en grafos con muchas aristas y nodos. Con esta implementación, el algoritmo de Dijkstra tiene una complejidad de O(e+vlogv), donde e es el número de aristas y v es el número de nodos.
+
+
+=========================================================================================================
+
+import java.util.*;
+
+public class FibonacciHeap implements IPriorityQueue {
+
+    private Node min;
+    private int size;
+    private Map<Integer, Node> nodeMap; // Mapa para seguimiento de nodos por su vértice
+
+    public FibonacciHeap() {
+        min = null;
+        size = 0;
+        nodeMap = new HashMap<>();
+    }
+
+    public void add(Node node) {
+        insert(node);
+    }
+
+    public void insert(Node node) {
+        node.degree = 0;
+        node.parent = null;
+        node.child = null;
+        node.mark = false;
+        if (min == null) {
+            node.left = node;
+            node.right = node;
+            min = node;
+        } else {
+            mergeLists(min, node);
+            if (node.distance < min.distance) {
+                min = node;
+            }
+        }
+        nodeMap.put(node.vertex, node); // Agregar al mapa
+        size++;
+    }
+
+    public Node poll() {
+        return extractMin();
+    }
+
+    public Node extractMin() {
+        Node z = min;
+        if (z != null) {
+            if (z.child != null) {
+                Node child = z.child;
+                do {
+                    Node nextChild = child.right;
+                    mergeLists(min, child);
+                    child.parent = null;
+                    child = nextChild;
+                } while (child != z.child);
+            }
+            removeNodeFromList(z);
+            if (z == z.right) {
+                min = null;
+            } else {
+                min = z.right;
+                consolidate();
+            }
+            nodeMap.remove(z.vertex); // Eliminar del mapa
+            size--;
+        }
+        return z;
+    }
+
+    public void decreaseKey(Node x, double k) {
+        if (k > x.distance) {
+            throw new IllegalArgumentException("New key is greater than current key");
+        }
+        x.distance = k;
+        Node y = x.parent;
+        if (y != null && x.distance < y.distance) {
+            cut(x, y);
+            cascadingCut(y);
+        }
+        if (x.distance < min.distance) {
+            min = x;
+        }
+    }
+
+    public boolean isEmpty() {
+        return min == null;
+    }
+
+    private void mergeLists(Node a, Node b) {
+        if (a == null || b == null) return;
+        Node aRight = a.right;
+        a.right = b.right;
+        a.right.left = a;
+        b.right = aRight;
+        b.right.left = b;
+    }
+
+    private void removeNodeFromList(Node node) {
+        node.left.right = node.right;
+        node.right.left = node.left;
+    }
+
+    private void cut(Node x, Node y) {
+        removeNodeFromList(x);
+        y.degree--;
+        if (x == x.right) {
+            y.child = null;
+        } else {
+            y.child = x.right;
+        }
+        x.right = x.left = x;
+        mergeLists(min, x);
+        x.parent = null;
+        x.mark = false;
+    }
+
+    private void cascadingCut(Node y) {
+        Node z = y.parent;
+        if (z != null) {
+            if (!y.mark) {
+                y.mark = true;
+            } else {
+                cut(y, z);
+                cascadingCut(z);
+            }
+        }
+    }
+
+    private void consolidate() {
+        int arraySize = (int) Math.ceil(Math.log(size) / Math.log(2)) + 1;
+        List<Node> aux = new ArrayList<>(Collections.nCopies(arraySize, null));
+
+        List<Node> toVisit = new ArrayList<>();
+        Node current = min;
+        if (current != null) {
+            do {
+                toVisit.add(current);
+                current = current.right;
+            } while (current != min);
+        }
+
+        for (Node w : toVisit) {
+            Node x = w;
+            int d = x.degree;
+            while (aux.get(d) != null) {
+                Node y = aux.get(d);
+                if (x.distance > y.distance) {
+                    Node temp = x;
+                    x = y;
+                    y = temp;
+                }
+                fibHeapLink(y, x);
+                aux.set(d, null);
+                d++;
+            }
+            aux.set(d, x);
+        }
+
+        min = null;
+        for (Node node : aux) {
+            if (node != null) {
+                if (min == null) {
+                    min = node;
+                } else {
+                    mergeLists(min, node);
+                    if (node.distance < min.distance) {
+                        min = node;
+                    }
+                }
+            }
+        }
+    }
+
+    private void fibHeapLink(Node y, Node x) {
+        removeNodeFromList(y);
+        y.left = y.right = y;
+        if (x.child == null) {
+            x.child = y;
+        } else {
+            mergeLists(x.child, y);
+        }
+        y.parent = x;
+        x.degree++;
+        y.mark = false;
+    }
+
+    public void delete(Node x) {
+        decreaseKey(x, Double.NEGATIVE_INFINITY);
+        extractMin();
+    }
+}
+
+==========================================================================================================
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class FibonacciHeap {
+    private Node min;
+    private int n;
+
+    public FibonacciHeap() {
+        min = null;
+        n = 0;
+    }
+
+    public void insert(Node x) {
+        x.degree = 0;
+        x.parent = null;
+        x.child = null;
+        x.mark = false;
+
+        if (min == null) {
+            min = x;
+            x.left = x;
+            x.right = x;
+        } else {
+            x.left = min;
+            x.right = min.right;
+            min.right.left = x;
+            min.right = x;
+            if (x.distance < min.distance) {
+                min = x;
+            }
+        }
+        n++;
+    }
+
+    public static FibonacciHeap union(FibonacciHeap H1, FibonacciHeap H2) {
+        FibonacciHeap H = new FibonacciHeap();
+        H.min = H1.min;
+
+        if (H.min != null && H2.min != null) {
+            Node H1Right = H1.min.right;
+            Node H2Left = H2.min.left;
+            
+            H1.min.right = H2.min;
+            H2.min.left = H1.min;
+            
+            H1Right.left = H2Left;
+            H2Left.right = H1Right;
+            
+            if (H2.min.distance < H1.min.distance) {
+                H.min = H2.min;
+            }
+        } else if (H2.min != null) {
+            H.min = H2.min;
+        }
+
+        H.n = H1.n + H2.n;
+        return H;
+    }
+
+    public Node extractMin() {
+        Node z = min;
+        if (z != null) {
+            if (z.child != null) {
+                List<Node> children = new ArrayList<>();
+                Node x = z.child;
+                do {
+                    children.add(x);
+                    x = x.right;
+                } while (x != z.child);
+
+                for (Node xChild : children) {
+                    xChild.left.right = xChild.right;
+                    xChild.right.left = xChild.left;
+                    xChild.left = min;
+                    xChild.right = min.right;
+                    min.right.left = xChild;
+                    min.right = xChild;
+                    xChild.parent = null;
+                }
+            }
+            z.left.right = z.right;
+            z.right.left = z.left;
+
+            if (z == z.right) {
+                min = null;
+            } else {
+                min = z.right;
+                consolidate();
+            }
+            n--;
+        }
+        return z;
+    }
+
+    private void consolidate() {
+        int Dn = ((int) Math.floor(Math.log(n) / Math.log(2))) + 1;
+        Node[] A = new Node[Dn];
+
+        List<Node> rootList = new ArrayList<>();
+        Node x = min;
+        if (x != null) {
+            do {
+                rootList.add(x);
+                x = x.right;
+            } while (x != min);
+        }
+
+        for (Node w : rootList) {
+            x = w;
+            int d = x.degree;
+            while (A[d] != null) {
+                Node y = A[d];
+                if (x.distance > y.distance) {
+                    Node temp = x;
+                    x = y;
+                    y = temp;
+                }
+                fibHeapLink(y, x);
+                A[d] = null;
+                d++;
+            }
+            A[d] = x;
+        }
+
+        min = null;
+        for (int i = 0; i < Dn; i++) {
+            if (A[i] != null) {
+                if (min == null) {
+                    min = A[i];
+                    min.left = min;
+                    min.right = min;
+                } else {
+                    A[i].left = min;
+                    A[i].right = min.right;
+                    min.right.left = A[i];
+                    min.right = A[i];
+                    if (A[i].distance < min.distance) {
+                        min = A[i];
+                    }
+                }
+            }
+        }
+    }
+
+    private void fibHeapLink(Node y, Node x) {
+        y.left.right = y.right;
+        y.right.left = y.left;
+        y.parent = x;
+
+        if (x.child == null) {
+            x.child = y;
+            y.left = y;
+            y.right = y;
+        } else {
+            y.left = x.child;
+            y.right = x.child.right;
+            x.child.right.left = y;
+            x.child.right = y;
+        }
+
+        x.degree++;
+        y.mark = false;
+    }
+
+    public void decreaseKey(Node x, double k) {
+        if (k > x.distance) {
+            throw new IllegalArgumentException("New key is greater than current key");
+        }
+        x.distance = k;
+        Node y = x.parent;
+        if (y != null && x.distance < y.distance) {
+            cut(x, y);
+            cascadingCut(y);
+        }
+        if (x.distance < min.distance) {
+            min = x;
+        }
+    }
+
+    private void cut(Node x, Node y) {
+        if (x.right == x) {
+            y.child = null;
+        } else {
+            x.left.right = x.right;
+            x.right.left = x.left;
+            if (y.child == x) {
+                y.child = x.right;
+            }
+        }
+        y.degree--;
+
+        x.left = min;
+        x.right = min.right;
+        min.right.left = x;
+        min.right = x;
+
+        x.parent = null;
+        x.mark = false;
+    }
+
+    private void cascadingCut(Node y) {
+        Node z = y.parent;
+        if (z != null) {
+            if (!y.mark) {
+                y.mark = true;
+            } else {
+                cut(y, z);
+                cascadingCut(z);
+            }
+        }
+    }
+
+    public void delete(Node x) {
+        decreaseKey(x, Double.NEGATIVE_INFINITY);
+        extractMin();
+    }
+}

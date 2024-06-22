@@ -46,20 +46,21 @@ public class Dijkstra {
                             Q.decreaseKey(nodes[v], alt);
                         }
                         // Actualizar la distancia en la cola
-                        
+
                         //Q.add(new Node(v, distancias[v])); // En un heap real usar decreaseKey
                     }
                 }
             }
         }
 
-      /* 
+        /* 
         //imprime resultados
         System.out.println("Nodo\tDistancia desde la raíz\tPrevio");
         for (int i = 0; i < V; i++) {
             System.out.println(i + "\t\t" + distancias[i] + "\t\t" + previos[i]);
         }
-     */ 
+            */
+     
 
         double[] previosD = new double[previos.length];
 
@@ -71,6 +72,7 @@ public class Dijkstra {
         double[][] arreglos = new double[][]{distancias, previosD};
         return arreglos;
     }
+    
 }
 /* 
 
