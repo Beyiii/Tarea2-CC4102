@@ -24,7 +24,7 @@ public class Main {
         Experiment e = new Experiment();
         Random rand = new Random(System.currentTimeMillis());
         //e.experimentFibonacci(12, 16, rand);
-        e.finalExperimentFibonacci(1);
+        //e.finalExperimentFibonacci(1);
         
     }
 }
